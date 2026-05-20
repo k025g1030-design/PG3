@@ -1,53 +1,49 @@
 #include <iostream>
-#include <variant>
+#include <cstdlib>
+#include <ctime>
+#include <thread>   
+#include <chrono>   
 
+typedef void (*ResultCallback)(int, int);
 
+void JudgeAndPrint(int user_guess, int dice_result) {
+    std::cout << "\n出目は「" << dice_result << "」でした！" << std::endl;
 
-template <typename T>
-std::variant<T, std::string> MinPlus(T a, T b) {
-	if constexpr (std::is_same_v<T, char>) {
-		return "数字以外は代入できません";
-	}
-	return (a < b) ? a : b;
+    int result_type = dice_result % 2;
+
+    if (user_guess == result_type) {
+        std::cout << "正解" << std::endl;
+    } else {
+        std::cout << "不正解" << std::endl;
+    }
 }
 
-void print_result(const auto& result) {
-	std::visit([](auto&& arg) {
-		std::cout << arg;
-	}, result);
-	std::cout << std::endl;
-}
 
-template <typename T>
-T Min(T a, T b) {
-	return (a < b) ? a : b;
-}
+void PlayGame(int user_guess, ResultCallback callback) {
+    std::cout << "サイコロを振っています......（結果発表まで3秒お待ちください）" << std::endl;
 
-std::string Min(char a, char b) {
-	return "数字以外は代入できません";
-}
+    std::this_thread::sleep_for(std::chrono::seconds(3));
 
+    int dice_result = (std::rand() % 6) + 1;
+
+    callback(user_guess, dice_result);
+}
 
 int main() {
 
-	std::cout << "整数型：";
-	print_result(MinPlus(3, 5));
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
-	std::cout << "浮動小数点型：";
-	print_result(MinPlus(3.14f, 2.71f));
+    int user_input;
 
-	std::cout << "倍精度浮動小数点型：";
-	print_result(MinPlus(3.14, 2.71));
+    std::cout << "=== 丁半（偶数・奇数）当てゲーム ===" << std::endl;
+    std::cout << "丁(偶数)なら「0」、半(奇数)なら「1」を入力してください: ";
 
-	std::cout << "文字型：";
-	print_result(MinPlus('A', 'B'));
+    if (!(std::cin >> user_input) || (user_input != 0 && user_input != 1)) {
+        std::cout << "入力エラーです。プログラムを再起動して 0 または 1 を入力してください。" << std::endl;
+        return 1;
+    }
 
-
-	std::cout << "整数型：" << Min(6, 9) << std::endl;
-	std::cout << "浮動小数点型：" << Min(3.14f, 8.71f) << std::endl;
-	std::cout << "倍精度浮動小数点型：" << Min(3.14, 1.71) << std::endl;
-	std::cout << "文字型：" << Min('A', 'B') << std::endl;
+    PlayGame(user_input, JudgeAndPrint);
 
     return 0;
 }
-
