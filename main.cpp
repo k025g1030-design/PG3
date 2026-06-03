@@ -4,29 +4,28 @@
 #include <thread>   
 #include <chrono>   
 
-typedef void (*ResultCallback)(int, int);
-
-void JudgeAndPrint(int user_guess, int dice_result) {
-    std::cout << "\n出目は「" << dice_result << "」でした！" << std::endl;
-
-    int result_type = dice_result % 2;
-
-    if (user_guess == result_type) {
-        std::cout << "正解" << std::endl;
-    } else {
-        std::cout << "不正解" << std::endl;
-    }
-}
 
 
-void PlayGame(int user_guess, ResultCallback callback) {
+void PlayGame(int user_guess) {
     std::cout << "サイコロを振っています......（結果発表まで3秒お待ちください）" << std::endl;
 
     std::this_thread::sleep_for(std::chrono::seconds(3));
 
     int dice_result = (std::rand() % 6) + 1;
 
-    callback(user_guess, dice_result);
+    auto judgeAndDisplay = [user_guess, dice_result]() {
+        std::cout << "\n出目は「" << dice_result << "」でした！" << std::endl;
+
+        int result_type = dice_result % 2;
+
+        if (user_guess == result_type) {
+            std::cout << "正解" << std::endl;
+        } else {
+            std::cout << "不正解" << std::endl;
+        }
+    };
+   
+    judgeAndDisplay();
 }
 
 int main() {
@@ -43,7 +42,7 @@ int main() {
         return 1;
     }
 
-    PlayGame(user_input, JudgeAndPrint);
+    PlayGame(user_input);
 
     return 0;
 }
