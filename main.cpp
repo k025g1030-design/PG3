@@ -2,14 +2,19 @@
 #include <cstdlib>
 #include <ctime>
 #include <thread>   
-#include <chrono>   
+#include <chrono>  
+#include <functional>
 
 
+
+
+void SetTimeout(std::function<void()> func, int delay_s) {
+    std::this_thread::sleep_for(std::chrono::seconds(delay_s));
+    func();
+}
 
 void PlayGame(int user_guess) {
     std::cout << "サイコロを振っています......（結果発表まで3秒お待ちください）" << std::endl;
-
-    std::this_thread::sleep_for(std::chrono::seconds(3));
 
     int dice_result = (std::rand() % 6) + 1;
 
@@ -23,9 +28,11 @@ void PlayGame(int user_guess) {
         } else {
             std::cout << "不正解" << std::endl;
         }
-    };
-   
-    judgeAndDisplay();
+        };
+
+    SetTimeout(judgeAndDisplay, 3);
+
+    
 }
 
 int main() {
