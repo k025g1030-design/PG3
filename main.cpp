@@ -62,5 +62,7 @@ int main() {
         delete shape;
     }
 
+    shapes.clear();
+
     return 0;
 }
