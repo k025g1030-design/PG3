@@ -1,27 +1,31 @@
 #include <iostream>
+#include <string>
 
-template<typename T1, typename T2>
-class Math {
-private:
-    T1 number1_;
-    T2 number2_;
-
-public:
-    Math(T1 n1, T2 n2) : number1_(n1), number2_(n2) {}
-    auto Min() -> decltype(number1_) {
-        return (number1_ < number2_) ? number1_ : number2_;
-    }
-};
+template<class T1, class T2>
+typename std::common_type<T1, T2>::type Min(T1 a, T2 b) {
+    return (a < b) ? a : b;
+}
 
 int main() {
-    std::cout << "--- Math判断開始 ---" << std::endl;
+    std::cout << "--- 判断開始 ---" << std::endl;
 
-    Math<int, int> mathInt(5, 10);
-    std::cout << "[int]最小値: " << mathInt.Min() << std::endl;
-    Math<double, double> mathDouble(3.14, 2.71);
-    std::cout << "[double]最小値: " << mathDouble.Min() << std::endl;
-    Math<float, float> mathFloat(0.14f, 2.71f);
-    std::cout << "[float]最小値: " << mathFloat.Min() << std::endl;
+    auto int2int = Min(3, 2);
+    std::cout << "最小値: " << int2int << std::endl;
+
+    auto int2float = Min(3, 5.5f);
+    std::cout << "最小値: " << int2float << std::endl;
+
+    auto int2double = Min(4, 3.0);
+    std::cout << "最小値: " << int2double << std::endl;
+
+    auto float2float = Min(3.0f, 5.5f);
+    std::cout << "最小値: " << float2float << std::endl;
+
+    auto float2double = Min(7.3f, 1.5);
+    std::cout << "最小値: " << float2double << std::endl;
+
+    auto double2double = Min(3.0, 2.0);
+    std::cout << "最小値: " << double2double << std::endl;
 
     return 0;
 }
